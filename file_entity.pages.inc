@@ -344,6 +344,8 @@ function file_entity_edit_validate($form, &$form_state) {
     }
   }
 
+  // Clear the page and block caches.
+  cache_clear_all();
   // Run entity form validation.
   entity_form_field_validate('file', $form, $form_state);
 }
@@ -373,6 +375,9 @@ function file_entity_edit_submit($form, &$form_state) {
   drupal_set_message(t('@type %title has been updated.', $args));
 
   $form_state['redirect'] = 'file/' . $file->fid;
+
+  // Clear the page and block caches.
+  cache_clear_all();
 }
 
 /**
@@ -386,6 +391,9 @@ function file_entity_edit_delete_submit($form, &$form_state) {
     unset($_GET['destination']);
   }
   $form_state['redirect'] = array('file/' . $fid . '/delete', array('query' => $destination));
+
+  // Clear the page and block caches.
+  cache_clear_all();
 }
 
 /**
@@ -411,6 +419,8 @@ function file_entity_delete_form($form, &$form_state, $file) {
     $description .= ' ' . t('This file is currently in use and may cause problems if deleted.');
   }
 
+  // Clear the page and block caches.
+  cache_clear_all();
   return confirm_form($form,
     t('Are you sure you want to delete the file %title?', array(
       '%title' => entity_label('file', $file),
