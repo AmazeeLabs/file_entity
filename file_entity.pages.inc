@@ -729,7 +729,12 @@ function file_entity_edit_submit($form, &$form_state) {
   if (!empty($form_state['values']['replace_upload'])) {
     $replacement = $form_state['values']['replace_upload'];
     // Move file from temp to permanent home.
-    file_unmanaged_copy($replacement->uri, $file->uri, FILE_EXISTS_REPLACE);
+
+    // This commit could be reverted after https://drupal.org/node/2045611 is
+    // done and released.
+    if (file_unmanaged_copy($replacement->uri, $file->uri, FILE_EXISTS_REPLACE)) {
+      file_delete($replacement);
+    }
   }
 
   // Run entity form submit handling and save the file.
