@@ -822,6 +822,18 @@ function file_entity_theme() {
       'variables' => array('file' => NULL, 'icon_directory' => NULL),
       'file' => 'file_entity.theme.inc',
     ),
+    'file_entity_image_style' => array(
+      'variables' => array(
+        'style_name' => NULL,
+        'path' => NULL,
+        'width' => NULL,
+        'height' => NULL,
+        'alt' => '',
+        'title' => NULL,
+        'attributes' => array(),
+      ),
+      'file' => 'file_entity.theme.inc',
+    ),
   );
 }
 
@@ -1156,7 +1168,7 @@ function file_entity_file_formatter_file_image_view($file, $display, $langcode) 
     );
     if (!empty($display['settings']['image_style'])) {
       $element = array(
-        '#theme' => 'image_style',
+        '#theme' => 'file_entity_image_style',
         '#style_name' => $display['settings']['image_style'],
         '#path' => $file->uri,
         '#width' => isset($file->override['attributes']['width']) ? $file->override['attributes']['width'] : $file->image_dimensions['width'],

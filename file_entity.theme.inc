@@ -37,3 +37,34 @@ function theme_file_entity_file_link($variables) {
 
   return '<span class="file">' . $icon . ' ' . l($link_text, $url, $options) . '</span>';
 }
+
+/**
+ * Own implementation of the image_style theme to bypass the browser cache.
+ */
+function theme_file_entity_image_style($variables) {
+  // Determine the dimensions of the styled image.
+  $dimensions = array(
+    'width' => $variables['width'],
+    'height' => $variables['height'],
+  );
+
+  image_style_transform_dimensions($variables['style_name'], $dimensions);
+
+  $variables['width'] = $dimensions['width'];
+  $variables['height'] = $dimensions['height'];
+
+  // Determine the URL for the styled image.
+  $variables['path'] = image_style_url($variables['style_name'], $variables['path']);
+  // Add the file modification time to the path to bypass the browser cache.
+  $path = drupal_parse_url($variables['path']);
+  $internal_path = str_replace($GLOBALS['base_url'] . '/', '', $path['path']);
+  if (is_file($internal_path)) {
+    $mtime = filemtime($internal_path);
+  }
+  else {
+    $mtime = 0;
+  }
+  $variables['path'] .= (strpos($variables['path'], '?') !== FALSE) ? '&' : '?';
+  $variables['path'] .= 't=' . $mtime;
+  return theme('image', $variables);
+}
