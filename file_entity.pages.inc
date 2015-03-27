@@ -181,6 +181,14 @@ function file_entity_add_upload_step_fields($form, &$form_state, array $options 
   $file = file_load($form_state['storage']['upload']);
   $file->type = $form_state['storage']['type'];
 
+  // Add support for title module (filename replacement)
+  if (module_exists('title') && count(module_invoke('title', 'field_replacement_info', 'file'))) {
+    $form['filename'] = array(
+      '#type' => 'value',
+      '#value' => isset($file->filename) ? $file->filename : NULL
+    );
+  }
+
   // Add fields.
   field_attach_form('file', $file, $form, $form_state);
 
