@@ -1253,6 +1253,7 @@ function file_entity_file_formatter_file_image_view($file, $display, $langcode) 
     $replace_options = array(
       'clear' => TRUE,
       'sanitize' => FALSE,
+      'language' => $GLOBALS['language'],
     );
     if (!empty($display['settings']['image_style'])) {
       $element = array(

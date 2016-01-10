@@ -173,6 +173,7 @@ function file_entity_file_load($files) {
   $replace_options = array(
     'clear' => TRUE,
     'sanitize' => FALSE,
+    'language' => $GLOBALS['language'],
   );
 
   foreach ($files as $file) {
