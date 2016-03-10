@@ -129,12 +129,10 @@ function file_entity_add_upload_step_upload($form, &$form_state, array $options 
 function file_entity_add_upload_step_filetype($form, &$form_state, array $options = array()) {
   $file = file_load($form_state['storage']['upload']);
 
-  $selected_files = $form['#options']['types'];
-
   $form['type'] = array(
     '#type' => 'radios',
     '#title' => t('File type'),
-    '#options' => file_entity_get_filetype_candidates($file, $selected_files),
+    '#options' => file_entity_get_filetype_candidates($file),
     '#default_value' => isset($form_state['storage']['type']) ? $form_state['storage']['type'] : NULL,
     '#required' => TRUE,
   );
@@ -309,12 +307,9 @@ function file_entity_usage_page($file) {
  * @return array
  *   An array of file type bundles that support the file's mime type.
  */
-function file_entity_get_filetype_candidates($file, $selected_files) {
+function file_entity_get_filetype_candidates($file) {
   $types = module_invoke_all('file_type', $file);
   drupal_alter('file_type', $types, $file);
-
-  $types = array_intersect($types, $selected_files);
-
   $candidates = array();
   foreach ($types as $type) {
     $file->type = $type;
@@ -331,8 +326,6 @@ function file_entity_get_filetype_candidates($file, $selected_files) {
 function file_entity_add_upload_submit($form, &$form_state) {
   $form_state['storage'] = isset($form_state['storage']) ? $form_state['storage'] : array();
   $form_state['storage'] = array_merge($form_state['storage'], $form_state['values']);
-
-  $selected_files = $form['#options']['types'];
 
   // This var is set to TRUE when we are ready to save the file.
   $save = FALSE;
@@ -351,7 +344,7 @@ function file_entity_add_upload_submit($form, &$form_state) {
       $file = file_load($form_state['storage']['upload']);
       if ($step == 2) {
         // Check if we can skip step 2.
-        $candidates = file_entity_get_filetype_candidates($file, $selected_files);
+        $candidates = file_entity_get_filetype_candidates($file);
         if (count($candidates) == 1) {
           $candidates_keys = array_keys($candidates);
           // There is only one possible filetype for this file.
