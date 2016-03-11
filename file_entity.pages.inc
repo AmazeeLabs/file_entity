@@ -344,6 +344,19 @@ function file_entity_add_upload_submit($form, &$form_state) {
   $form_state['storage'] = isset($form_state['storage']) ? $form_state['storage'] : array();
   $form_state['storage'] = array_merge($form_state['storage'], $form_state['values']);
 
+  if ($form['#step'] == 1) {
+    if ($file = file_load($form_state['storage']['upload'])) {
+      $wrapper = entity_metadata_wrapper('file', $file);
+
+      // Since we use title module with reverse sync disabled, we need to
+      // explicitly set the filename_field value.
+      if (isset($wrapper->filename_field) && !$wrapper->filename_field->value) {
+        $wrapper->filename_field->set($file->filename);
+        $wrapper->save();
+      }
+    }
+  }
+
   // Field selected allowed types.
   $selected_files = $form['#options']['types'];
 
